@@ -60,7 +60,7 @@ function News() {
   return (
     <div className="mt-4 grid grid-cols-4 gap-2">
       {news.map((newone) => (
-        <div className="h-[27rem] rounded-md shadow-md bg-white ">
+        <div className="h-[30rem] rounded-md shadow-md bg-white ">
           <div>
             <img src={newone.image} alt="newImage" className="h-[15rem]" />
           </div>

@@ -1,17 +1,48 @@
 import { useState } from "react";
 import React from "react";
+import { set, ref, child, push, update } from "firebase/database";
+import { database } from "../firebase";
+import { v4 as uuidv4, v5 as uuidv5 } from 'uuid';
+
+
 
 function CreateNews() {
+  const uuid = uuidv4();
+
   const [title, setTitle] = useState("");
   const [subTitle, setSubTitle] = useState("");
 
-  const [excerpt, setExcerpt] = useState("");
+  const [body, setBody] = useState("");
+
 
   const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedOption, setSelectedOption] = useState('');
 
-  const handleSubmit = (e) => {
+  console.log("hello",uuid)
+
+   // A post entry.
+   const postData = {
+    
+  uuid, title, subTitle, body, NewsCats:selectedOption, 
+  };
+
+  
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Logic to handle form submission
+
+     // Get a key for a new Post.
+  const newPostKey = push(child(ref(database), 'posts')).key;
+
+  
+
+    const updates = {};
+  updates['/news/' + newPostKey] = postData;
+  updates['/user-news/' + uuid + '/' + newPostKey] = postData;
+
+  return update(ref(database), updates)
+    
+   
   };
 
   const handleImageUpload = (e) => {
@@ -61,6 +92,15 @@ function CreateNews() {
               onChange={(e) => setSubTitle(e.target.value)}
             />
           </div>
+          <div>
+      <label htmlFor="selectInput">Select an option:</label>
+      <select id="selectInput" value={selectedOption} onChange={(e)=>{setSelectedOption(e.target.value)}}>
+        <option value="">Category</option>
+        <option value="csa">Cyber Security Act</option>
+        <option value="dta">Data Protection Act</option>
+        <option value="eta">Electronic Transaction Act</option>
+      </select>
+    </div>
 
           <div className="mb-4">
             <label
@@ -73,8 +113,8 @@ function CreateNews() {
               id="excerpt"
               placeholder="Enter the excerpt"
               rows="10"
-              value={excerpt}
-              onChange={(e) => setExcerpt(e.target.value)}></textarea>
+              value={body}
+              onChange={(e) => setBody(e.target.value)}></textarea>
           </div>
           <div className="mb-4">
             <div className="">

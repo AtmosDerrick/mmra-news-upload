@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import { Navigate } from "react-router-dom";
+import {  signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase";
+
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -20,6 +23,22 @@ function Login() {
       console.log("work");
       setredirect(true);
     }
+
+    signInWithEmailAndPassword(auth, email, password)
+  .then((userCredential) => {
+    // Signed in 
+    const user = userCredential.user;
+    setredirect(true);
+
+    console.log(user)
+    // ...
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    console.log(errorCode)
+  });
+
   };
 
   if (redirect) {
