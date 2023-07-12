@@ -7,20 +7,33 @@ import CreateNews from "./pages/CreateNews";
 import EditNews from "./pages/EditNews";
 
 function App() {
-  return (
-    <div className="w-3/4 mx-auto">
-      <Nav />
+    return ( <
+        div className = "w-full xl:w-3/4 xl:mx-auto px-8 " >
+        <
+        Nav / >
 
-      <Routes>
-        <Route index element={<HomePage />} />
-        <Route path="/mainpage" element={<MainPage />} />
-        <Route path="/createNews" element={<CreateNews />} />
-        <Route path="/edit" element={<EditNews />} />
+        <
+        Routes >
+        <
+        Route index element = { < HomePage / > }
+        /> <
+        Route path = "/mainpage"
+        element = { < MainPage / > }
+        /> <
+        Route path = "/createNews"
+        element = { < CreateNews / > }
+        /> <
+        Route path = "/edit"
+        element = { < EditNews / > }
+        />
 
-        <Route path="/" element={<HomePage />} />
-      </Routes>
-    </div>
-  );
+        <
+        Route path = "/"
+        element = { < HomePage / > }
+        /> < /
+        Routes > <
+        /div>
+    );
 }
 
 export default App;
