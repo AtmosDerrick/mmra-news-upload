@@ -1,15 +1,33 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 
 //images
 import newsImage from "../images/news.jpg";
 import EditNews from "../pages/EditNews";
+import { getDatabase, ref, onValue } from "firebase/database";
+import { database } from "../firebase";
 
 function News() {
   const [redirect, setRedirect] = useState("");
   const [title, setTitle] = useState("");
   const [subTitle, setSubTitle] = useState("");
   const [body, setBody] = useState("");
+  const [newsData, setNewsData] = useState([]);
+
+  useEffect(() => {
+    onValue(ref(database), (snapshot) => {
+      setNewsData([]);
+      const data = snapshot.val();
+      console.log("firebase", data);
+      const getNewsData = data.news;
+      if (data !== null) {
+        Object.values(getNewsData).map((news) => {
+          console.log(news);
+          setNewsData((oldArray) => [...oldArray, news]);
+        });
+      }
+    });
+  }, []);
 
   const news = [
     {

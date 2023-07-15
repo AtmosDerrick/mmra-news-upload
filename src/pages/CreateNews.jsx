@@ -1,14 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import React from "react";
 import { set, ref, child, push, update } from "firebase/database";
 import { database, storage } from "../firebase";
 import { v4 as uuidv4, v5 as uuidv5 } from "uuid";
 import { uploadBytes, getDownloadURL } from "firebase/storage";
-
+import { UserAuth } from "../context/Auth";
 import { ref as storageRef } from "firebase/storage";
 
 function CreateNews() {
   const uuid = uuidv4();
+  const { user } = UserAuth();
 
   const [title, setTitle] = useState("");
   const [subTitle, setSubTitle] = useState("");
@@ -18,12 +19,29 @@ function CreateNews() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedOption, setSelectedOption] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [buttonReady, setButtonReady] = useState(false);
+  const [imageReady, setImageReady] = useState(false);
 
   console.log("hello", uuid);
+
+  useEffect(() => {
+    if (
+      title === "" &&
+      subTitle === "" &&
+      selectedOption === "" &&
+      body === ""
+    ) {
+      setButtonReady(true);
+    } else {
+      setButtonReady(false);
+    }
+  }, [title, subTitle, body, selectedOption]);
 
   // A post entry.
   const postData = {
     uuid,
+    user: user.email,
+
     title,
     subTitle,
     body,
@@ -34,17 +52,22 @@ function CreateNews() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Get a key for a new Post.
-    const newPostKey = push(child(ref(database), "news")).key;
+    if (imageUrl !== "") {
+      // Get a key for a new Post.
+      const newPostKey = push(child(ref(database), "news")).key;
 
-    const updates = {};
-    updates["/news/" + newPostKey] = postData;
-    updates["/user-news/" + uuid + "/" + newPostKey] = postData;
+      const updates = {};
+      updates["/news/" + newPostKey] = postData;
+      updates["/user-news/" + uuid + "/" + newPostKey] = postData;
 
-    return update(ref(database), updates);
+      return update(ref(database), updates);
+    } else {
+      console.log("image url is empty");
+    }
   };
 
   const handleImageUpload = (e) => {
+    setImageReady(true);
     const file = e.target.files[0];
     setSelectedImage(URL.createObjectURL(file));
     console.log("image", file);
@@ -59,6 +82,7 @@ function CreateNews() {
         getDownloadURL(imageRef).then((imageUrl) => {
           console.log("image url", imageUrl);
           setImageUrl(imageUrl);
+          setImageReady(false);
         });
       });
   };
@@ -182,8 +206,17 @@ function CreateNews() {
             </div>
           </div>
           <div className="w-full">
-            <button className="primary w-full" type="submit">
-              Publish
+            <button
+              className="primary w-full"
+              type="submit"
+              disabled={buttonReady ? true : imageReady ? true : false}>
+              {buttonReady ? (
+                <div>Publish</div>
+              ) : imageReady ? (
+                "Image Loading ..."
+              ) : (
+                "Publish"
+              )}
             </button>
           </div>
         </form>
