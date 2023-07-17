@@ -1,49 +1,45 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
-
+import { database } from "../firebase";
 //images
 import newsImage from "../images/news.jpg";
 import EditNews from "../pages/EditNews";
+import { getDatabase, ref, onValue } from "firebase/database";
+import { UserAuth } from "../context/Auth";
 
 function News() {
   const [redirect, setRedirect] = useState("");
   const [title, setTitle] = useState("");
   const [subTitle, setSubTitle] = useState("");
   const [body, setBody] = useState("");
+  const [newsData, setNewsData] = useState([]);
+  const [pageReady, setPageReady] = useState(false);
+  const { user } = UserAuth();
 
-  const news = [
-    {
-      id: "1",
-      title: "Title1",
-      subTitle: "Subtitle1",
-      body: "Commodo sint cupidatat deserunt ex minim voluptate Lorem. Aute velit quis ut quis sint elit reprehenderit officia aliquip laborum...",
-      image: newsImage,
-    },
-    {
-      id: "2",
-      title: "Title2",
-      subTitle: "Subtitle2",
-      body: "Commodo sint cupidatat deserunt ex minim voluptate Lorem. Aute velit quis ut quis sint elit reprehenderit officia aliquip laborum...",
-      image:
-        "https://static.independent.co.uk/s3fs-public/thumbnails/image/2017/01/30/15/online-dating-scam.jpg?width=1200&height=900&fit=crop",
-    },
-    {
-      id: "3",
-      title: "Title3",
-      subTitle: "Subtitle3",
-      body: "Commodo sint cupidatat deserunt ex minim voluptate Lorem. Aute velit quis ut quis sint elit reprehenderit officia aliquip laborum...",
-      image:
-        "https://media.kasperskycontenthub.com/wp-content/uploads/sites/103/2020/11/19110609/iot-540x270.jpg",
-    },
-    {
-      id: "4",
-      title: "Title4",
-      subTitle: "Subtitle4",
-      body: "Commodo sint cupidatat deserunt ex minim voluptate Lorem. Aute velit quis ut quis sint elit reprehenderit officia aliquip laborum...",
-      image:
-        "https://cdn.ghanaweb.com/imagelib/src/Ursula_Owusu_Ekuful-Parliament202121.jpg",
-    },
-  ];
+  useEffect(() => {
+    onValue(ref(database), (snapshot) => {
+      setNewsData([]);
+      const data = snapshot.val();
+
+      const getNewsData = data.news;
+      console.log("data news", getNewsData);
+      if (data !== null) {
+        Object.values(getNewsData).map((news) => {
+          console.log(news);
+          setNewsData((oldArray) => [...oldArray, news]);
+          setPageReady(true);
+        });
+      }
+    });
+  }, []);
+
+  if (pageReady) {
+    console.log("page ready", pageReady);
+  }
+
+  const filterData = newsData.filter((filterNews) => {
+    return filterNews.email === user.user;
+  });
 
   const editNew = (id, title, subtitle, body) => {
     setRedirect("true");
@@ -57,27 +53,35 @@ function News() {
       <EditNews edittitle={title} editsubTitle={subTitle} editbody={body} />
     );
   }
+
+  if (pageReady === false) {
+    return (
+      <div>
+        <img src="https://i.pinimg.com/originals/3d/6a/a9/3d6aa9082f3c9e285df9970dc7b762ac.gif" />
+      </div>
+    );
+  }
   return (
-    <div className="mt-4 grid grid-cols-4 gap-2">
-      {news.map((newone) => (
-        <div className="h-[30rem] rounded-md shadow-md bg-white ">
+    <div className="mt-4 grid grid-cols-4 gap-4">
+      {filterData.map((newone) => (
+        <div
+          key={newone.uuid}
+          className="h-[auto] rounded-md shadow-md bg-white ">
           <div>
-            <img src={newone.image} alt="newImage" className="h-[15rem]" />
+            <img
+              src={newone.imageUrl}
+              alt="newImage"
+              className="h-[15rem] w-full"
+            />
           </div>
           <div className="p-2">
             <div className="w-full py-1">
               {" "}
-              <h2 className="text-2xl font-bold font-sans text-primary  ">
+              <h2 className="text-xl truncate font-bold font-sans text-primary  ">
                 {newone.title}
               </h2>
-              <h4 className="text-lg font-medium text-gray-700 ">
-                {newone.subTitle}
-              </h4>
             </div>
-            <p className="text-base italic">
-              Do aliqua proident et sunt minim in nulla anim aliqua.
-              Exercitation commodo commodo consectetur ipsum id...
-            </p>
+            <p className="text-base italic truncate ">{newone.body}</p>
           </div>
           <div className="relative mt-8">
             <div className="absolute bottom-1 right-1 z-60">

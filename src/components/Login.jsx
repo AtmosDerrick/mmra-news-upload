@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { Navigate } from "react-router-dom";
-import {  signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
-
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [redirect, setredirect] = useState(false);
+  const [successAlert, setSuccessAlert] = useState(false);
+  const [errorAlert, setErrorAlert] = useState(false);
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -25,20 +26,32 @@ function Login() {
     }
 
     signInWithEmailAndPassword(auth, email, password)
-  .then((userCredential) => {
-    // Signed in 
-    const user = userCredential.user;
-    setredirect(true);
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
 
-    console.log(user)
-    // ...
-  })
-  .catch((error) => {
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    console.log(errorCode)
-  });
+        setSuccessAlert(true);
 
+        setTimeout(() => {
+          setSuccessAlert(false);
+          console.log("time out");
+        }, 3000);
+        setredirect(true);
+
+        console.log(user);
+        // ...
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorCode);
+        setErrorAlert(true);
+
+        setTimeout(() => {
+          setErrorAlert(false);
+          console.log("time out");
+        }, 3000);
+      });
   };
 
   if (redirect) {
@@ -48,6 +61,16 @@ function Login() {
     <div className="w-full ">
       <div className="w-full px-4 flex justify-center items-center h-[40vh] ">
         <form className="w-full   px-8 pt-6 pb-8 mb-4" onSubmit={handleSubmit}>
+          {successAlert && (
+            <div className="bg-blue-400  my-2 py-2 px-4 w-full rounded-md shadow-md text-center font-medium">
+              Publish Successfully
+            </div>
+          )}
+          {errorAlert && (
+            <div className="bg-red-400  my-2 py-2 px-4 w-full rounded-md shadow-md text-center font-medium">
+              Incorrect credentials
+            </div>
+          )}
           <div className="mb-4">
             <label
               className="block text-gray-700 text-sm font-bold mb-2"

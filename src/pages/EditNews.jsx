@@ -23,7 +23,11 @@ function EditNews({ edittitle, editsubTitle, editbody }) {
   return (
     <div className="flex justify-between">
       <div className="w-full">
-        <img src="./images/globe.jpg" alt="cyber globe" className="h-[90vh]" />
+        <img
+          src="https://i.pinimg.com/564x/69/20/48/692048f3e7db73e974ae84d0520f9b28.jpg"
+          alt="cyber globe"
+          className="h-[90vh]"
+        />
       </div>
       <div className="w-full h-[90vh] overflow-y-auto">
         <div className="w-full text-2xl font-bold mb-2 text-center font-serif text-primary z-20 pt-4 ">
