@@ -21,6 +21,8 @@ function CreateNews() {
   const [imageUrl, setImageUrl] = useState("");
   const [buttonReady, setButtonReady] = useState(false);
   const [imageReady, setImageReady] = useState(false);
+  const [successAlert, setSuccessAlert] = useState(false);
+  const [errorAlert, setErrorAlert] = useState(false);
 
   console.log("hello", uuid);
 
@@ -29,7 +31,8 @@ function CreateNews() {
       title === "" &&
       subTitle === "" &&
       selectedOption === "" &&
-      body === ""
+      body === "" &&
+      selectedImage === ""
     ) {
       setButtonReady(true);
     } else {
@@ -52,7 +55,13 @@ function CreateNews() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (imageUrl !== "") {
+    if (
+      title !== "" &&
+      subTitle !== "" &&
+      body !== "" &&
+      selectedOption !== "" &&
+      imageUrl !== ""
+    ) {
       // Get a key for a new Post.
       const newPostKey = push(child(ref(database), "news")).key;
 
@@ -60,9 +69,28 @@ function CreateNews() {
       updates["/news/" + newPostKey] = postData;
       updates["/user-news/" + uuid + "/" + newPostKey] = postData;
 
-      return update(ref(database), updates);
+      update(ref(database), updates);
+
+      setTitle("");
+      setSubTitle("");
+      setSelectedOption("");
+      setSelectedImage("");
+      setBody("");
+
+      setSuccessAlert(true);
+
+      setTimeout(() => {
+        setSuccessAlert(false);
+        console.log("time out");
+      }, 5000);
     } else {
       console.log("image url is empty");
+      setErrorAlert(true);
+
+      setTimeout(() => {
+        setErrorAlert(false);
+        console.log("time out");
+      }, 5000);
     }
   };
 
@@ -99,6 +127,7 @@ function CreateNews() {
         <div className="w-full text-2xl font-bold mb-2 text-center font-serif text-primary z-20 pt-4 ">
           Create News
         </div>
+
         <form
           className="bg-white shadow-md rounded px-8 pt-2 pb-2 mb-4"
           onSubmit={handleSubmit}>
@@ -168,11 +197,29 @@ function CreateNews() {
             <div className="">
               <div className="flex items-center justify-center">
                 {selectedImage ? (
-                  <img
-                    src={selectedImage}
-                    alt="Uploaded"
-                    className="max-w-full h-auto"
-                  />
+                  <div>
+                    {" "}
+                    <img
+                      src={selectedImage}
+                      alt="Uploaded"
+                      className="max-w-full h-auto"
+                    />
+                    <div className="w-full flex justify-center mt-4">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-6 h-6">
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </div>
+                  </div>
                 ) : (
                   <div className="border-2 border-gray-300 border-dashed rounded-lg p-6">
                     <label
@@ -209,15 +256,25 @@ function CreateNews() {
             <button
               className="primary w-full"
               type="submit"
-              disabled={buttonReady ? true : imageReady ? true : false}>
+              disabled={buttonReady ? true : false}>
               {buttonReady ? (
                 <div>Publish</div>
               ) : imageReady ? (
-                "Image Loading ..."
+                "Image Uplaoding ..."
               ) : (
                 "Publish"
               )}
             </button>
+            {successAlert && (
+              <div className="bg-blue-400  mt-2 py-2 px-4 w-full rounded-md shadow-md text-center font-medium">
+                Publish Successfully
+              </div>
+            )}
+            {errorAlert && (
+              <div className="bg-red-400  mt-2 py-2 px-4 w-full rounded-md shadow-md text-center font-medium">
+                Fill in the Blank Spaces
+              </div>
+            )}
           </div>
         </form>
       </div>
