@@ -62,12 +62,8 @@ function CreateNews() {
       selectedOption !== "" &&
       imageUrl !== ""
     ) {
-      // Get a key for a new Post.
-      const newPostKey = push(child(ref(database), "news")).key;
-
       const updates = {};
-      updates["/news/" + newPostKey] = postData;
-      updates["/user-news/" + uuid + "/" + newPostKey] = postData;
+      updates["/news/" + uuid] = postData;
 
       update(ref(database), updates);
 
