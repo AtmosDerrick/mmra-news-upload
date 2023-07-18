@@ -1,8 +1,46 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import News from "../components/News";
 import { Link } from "react-router-dom";
+import { database } from "../firebase";
+import { getDatabase, ref, onValue } from "firebase/database";
 
 function MainPage() {
+  const [search, setSearch] = useState("");
+  const [newsData, setNewsData] = useState([]);
+  const [prevNews, setPrevNews] = useState([]);
+  const [pageReady, setPageReady] = useState(false);
+
+  useEffect(() => {
+    onValue(ref(database), (snapshot) => {
+      const data = snapshot.val();
+
+      if (data !== null) {
+        const getNewsData = Object.values(data.news);
+        const getPrevNewsData = Object.values(data.news);
+
+        setNewsData(getNewsData);
+        setPrevNews(getPrevNewsData);
+
+        setPageReady(true);
+      }
+    });
+  }, []);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setNewsData(prevNews);
+
+    console.log("checking", newsData);
+
+    if (search !== "") {
+      const searchNews = prevNews.filter((news) => {
+        return news.title.toLowerCase().includes(search.toLocaleLowerCase());
+      });
+
+      setNewsData(searchNews);
+    }
+  };
+
   return (
     <div>
       <div className="bg-gray-100 h-[10vh] w-full mt-4 rounded-2xl flex justify-between py-2 px-2">
@@ -50,9 +88,15 @@ function MainPage() {
             <input
               type="text"
               placeholder="search..."
+              onChange={(e) => {
+                setSearch(e.target.value);
+                if (search === "") {
+                  setNewsData(prevNews);
+                }
+              }}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
-            <button className="primary flex gap-2 ">
+            <button className="primary flex gap-2 " onClick={handleSearch}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -71,7 +115,11 @@ function MainPage() {
           </form>
         </div>
       </div>
-      <News />
+      <News
+        newsData={newsData}
+        setNewsData={setNewsData}
+        pageReady={pageReady}
+      />
     </div>
   );
 }

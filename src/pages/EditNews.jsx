@@ -1,17 +1,16 @@
 import { useState } from "react";
 import React from "react";
+import { getDatabase, ref, child, push, update } from "firebase/database";
+import { database } from "../firebase";
 
 function EditNews({ edittitle, editsubTitle, editbody }) {
   const [title, setTitle] = useState(edittitle);
   const [subTitle, setSubTitle] = useState(editsubTitle);
-
-  const [excerpt, setExcerpt] = useState(editbody);
+  const [body, setBody] = useState(editbody);
 
   const [selectedImage, setSelectedImage] = useState(null);
 
-  console.log(title);
-
-  const handleSubmit = (e) => {
+  const handleUpate = (e) => {
     e.preventDefault();
     // Logic to handle form submission
   };
@@ -35,7 +34,7 @@ function EditNews({ edittitle, editsubTitle, editbody }) {
         </div>
         <form
           className="bg-white shadow-md rounded px-8 pt-2 pb-2 mb-4"
-          onSubmit={handleSubmit}>
+          onSubmit={handleUpate}>
           <div className="mb-4">
             <label
               className="block text-gray-700 text-sm font-bold mb-2"
@@ -79,8 +78,8 @@ function EditNews({ edittitle, editsubTitle, editbody }) {
               id="excerpt"
               placeholder="Enter the excerpt"
               rows="10"
-              value={excerpt}
-              onChange={(e) => setExcerpt(e.target.value)}></textarea>
+              value={body}
+              onChange={(e) => setBody(e.target.value)}></textarea>
           </div>
           <div className="mb-4">
             <div className="">
