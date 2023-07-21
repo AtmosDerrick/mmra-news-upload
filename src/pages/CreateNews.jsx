@@ -6,7 +6,6 @@ import { v4 as uuidv4, v5 as uuidv5 } from "uuid";
 import { uploadBytes, getDownloadURL } from "firebase/storage";
 import { UserAuth } from "../context/Auth";
 import { ref as storageRef } from "firebase/storage";
-
 function CreateNews() {
   const uuid = uuidv4();
   const { user } = UserAuth();
@@ -23,10 +22,16 @@ function CreateNews() {
   const [imageReady, setImageReady] = useState(false);
   const [successAlert, setSuccessAlert] = useState(false);
   const [errorAlert, setErrorAlert] = useState(false);
+  const [currentDateTime, setCurrentDateTime] = useState("");
 
   console.log("hello", uuid);
 
   useEffect(() => {
+    const now = new Date();
+    const dateTimeString = now.toLocaleString();
+    setCurrentDateTime(dateTimeString);
+
+    console.log({ currentDateTime });
     if (
       title === "" &&
       subTitle === "" &&
@@ -50,6 +55,7 @@ function CreateNews() {
     body,
     imageUrl,
     NewsCats: selectedOption,
+    timestamp: currentDateTime,
   };
 
   const handleSubmit = async (e) => {
@@ -248,7 +254,18 @@ function CreateNews() {
               </div>
             </div>
           </div>
+
           <div className="w-full">
+            {successAlert && (
+              <div className="bg-blue-400  mt-2 py-2 px-4 w-full rounded-md shadow-md text-center font-medium">
+                Publish Successfully
+              </div>
+            )}
+            {errorAlert && (
+              <div className="bg-red-400  mt-2 py-2 px-4 w-full rounded-md shadow-md text-center font-medium">
+                Fill in the Blank Spaces
+              </div>
+            )}
             <button
               className="primary w-full"
               type="submit"
@@ -261,16 +278,6 @@ function CreateNews() {
                 "Publish"
               )}
             </button>
-            {successAlert && (
-              <div className="bg-blue-400  mt-2 py-2 px-4 w-full rounded-md shadow-md text-center font-medium">
-                Publish Successfully
-              </div>
-            )}
-            {errorAlert && (
-              <div className="bg-red-400  mt-2 py-2 px-4 w-full rounded-md shadow-md text-center font-medium">
-                Fill in the Blank Spaces
-              </div>
-            )}
           </div>
         </form>
       </div>

@@ -27,8 +27,7 @@ function CreateTips() {
     const newPostKey = push(child(ref(database), "Tips")).key;
 
     const updates = {};
-    updates["/tips/" + newPostKey] = postData;
-    updates["/user-tips/" + uuid + "/" + newPostKey] = postData;
+    updates["/tips/" + uuid] = postData;
 
     return update(ref(database), updates);
   };
