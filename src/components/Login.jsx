@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { Navigate } from "react-router-dom";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+} from "firebase/auth";
+
 import { auth } from "../firebase";
 
 function Login() {
@@ -9,6 +13,7 @@ function Login() {
   const [redirect, setredirect] = useState(false);
   const [successAlert, setSuccessAlert] = useState(false);
   const [errorAlert, setErrorAlert] = useState(false);
+  const [resetAlert, setResetAlert] = useState(false);
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -54,6 +59,20 @@ function Login() {
       });
   };
 
+  const handleForgetPassword = () => {
+    setResetAlert(true);
+    sendPasswordResetEmail(auth, email)
+      .then(() => {
+        // Password reset email sent!
+        console.log("send password reset");
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // ..
+      });
+  };
+
   if (redirect) {
     return <Navigate to="/mainPage" />;
   }
@@ -64,6 +83,11 @@ function Login() {
           {successAlert && (
             <div className="bg-blue-400  my-2 py-2 px-4 w-full rounded-md shadow-md text-center font-medium">
               Publish Successfully
+            </div>
+          )}
+          {resetAlert && (
+            <div className="bg-blue-400  my-2 py-2 px-4 w-full rounded-md shadow-md text-center font-medium">
+              Check your email to reset password
             </div>
           )}
           {errorAlert && (
@@ -105,11 +129,11 @@ function Login() {
             <button className=" primary" type="submit">
               Sign In
             </button>
-            <a
-              className="inline-block align-baseline font-bold text-sm text-primary"
-              href="#">
+            <div
+              className="inline-block align-baseline font-bold text-sm text-primary hover:cursor-pointer"
+              onClick={handleForgetPassword}>
               Forgot Password?
-            </a>
+            </div>
           </div>
         </form>
       </div>
