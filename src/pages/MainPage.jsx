@@ -21,6 +21,8 @@ function MainPage() {
         setNewsData(getNewsData);
         setPrevNews(getPrevNewsData);
 
+        console.log({ newsData });
+
         setPageReady(true);
       }
     });
@@ -40,6 +42,8 @@ function MainPage() {
       setNewsData(searchNews);
     }
   };
+
+  console.log(newsData.length, "new data is what");
 
   return (
     <div>
@@ -115,11 +119,15 @@ function MainPage() {
           </form>
         </div>
       </div>
-      <News
-        newsData={newsData}
-        setNewsData={setNewsData}
-        pageReady={pageReady}
-      />
+      {newsData ? (
+        <News
+          newsData={newsData}
+          setNewsData={setNewsData}
+          pageReady={pageReady}
+        />
+      ) : (
+        console.log("undefine")
+      )}
     </div>
   );
 }
