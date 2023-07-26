@@ -22,14 +22,19 @@ function CreateTips() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (title !== "" && body !== "") {
+      // Get a key for a new Post.
+      const newPostKey = push(child(ref(database), "Tips")).key;
 
-    // Get a key for a new Post.
-    const newPostKey = push(child(ref(database), "Tips")).key;
+      const updates = {};
+      updates["/tips/" + uuid] = postData;
 
-    const updates = {};
-    updates["/tips/" + uuid] = postData;
+      update(ref(database), updates);
+      console.log("save tip");
 
-    return update(ref(database), updates);
+      setTitle("");
+      setBody("");
+    }
   };
 
   return (
