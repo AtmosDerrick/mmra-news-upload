@@ -10,6 +10,8 @@ function CreateTips() {
   const [title, setTitle] = useState("");
 
   const [body, setBody] = useState("");
+  const [successAlert, setSuccessAlert] = useState(false);
+  const [errorAlert, setErrorAlert] = useState(false);
 
   console.log("hello", uuid);
 
@@ -34,6 +36,20 @@ function CreateTips() {
 
       setTitle("");
       setBody("");
+
+      setSuccessAlert(true);
+
+      setTimeout(() => {
+        setSuccessAlert(false);
+        console.log("time out");
+      }, 5000);
+    } else {
+      setErrorAlert(true);
+
+      setTimeout(() => {
+        setErrorAlert(false);
+        console.log("time out");
+      }, 5000);
     }
   };
 
@@ -46,6 +62,19 @@ function CreateTips() {
         />
       </div>
       <div className="w-full mx-auto h-[90vh] overflow-y-auto">
+        <div>
+          {" "}
+          {successAlert && (
+            <div className="bg-blue-400  mt-2 py-2 px-4 w-full rounded-md shadow-md text-center font-medium">
+              Publish Successfully
+            </div>
+          )}
+          {errorAlert && (
+            <div className="bg-red-400  mt-2 py-2 px-4 w-full rounded-md shadow-md text-center font-medium">
+              Fill in the Blank Spaces
+            </div>
+          )}
+        </div>
         <div className="w-full text-2xl font-bold mb-2 text-center font-serif text-primary z-20 pt-4 ">
           Tips
         </div>
