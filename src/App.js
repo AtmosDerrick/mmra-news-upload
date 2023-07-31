@@ -11,7 +11,7 @@ import CreateTips from "./pages/CreateTips";
 
 function App() {
   return (
-    <div className="w-full xl:w-3/4 xl:mx-auto px-8 ">
+    <div className="w-full xl:w-3/4 xl:mx-auto px-0 lg:px-8 ">
       <AuthContextProvider>
         {" "}
         <Nav />

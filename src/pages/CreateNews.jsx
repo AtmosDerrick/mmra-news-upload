@@ -117,17 +117,19 @@ function CreateNews() {
       });
   };
   return (
-    <div className="flex justify-between">
+    <div className="md:flex md:justify-between">
       <div className="w-full">
         <img
           src="https://i.pinimg.com/564x/e4/3f/11/e43f11f2b4e2140df7e92321f18dcea4.jpg"
           alt="cyber globe"
-          className="h-[90vh]"
+          className="md:h-[90vh]"
         />
       </div>
-      <div className="w-full h-[90vh] overflow-y-auto">
-        <div className="w-full text-2xl font-bold mb-2 text-center font-serif text-primary z-20 pt-4 ">
-          Create News
+      <div className="w-full h-[90vh] md:overflow-y-auto">
+        <div className="w-full text-2xl font-bold mb-2 text-center font-sans  md:text-primary z-20 pt-4 ">
+          <span className="bg-primary md:bg-white text-white md:text-primary px-4">
+            Create News
+          </span>
         </div>
 
         <form

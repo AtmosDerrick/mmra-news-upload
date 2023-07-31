@@ -97,7 +97,7 @@ function News({ newsData, setNewsData, pageReady }) {
     return (
       <div>
         {
-          <div className="mt-4 grid grid-cols-4 gap-4">
+          <div className="mt-4 grid md:grid-cols-4 grid-cols-1 gap-4 px-2 md:px-0">
             {reverseNews.map((newone) => (
               <div
                 key={newone.uuid}
