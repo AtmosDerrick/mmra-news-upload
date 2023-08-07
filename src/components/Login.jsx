@@ -14,6 +14,7 @@ function Login() {
   const [successAlert, setSuccessAlert] = useState(false);
   const [errorAlert, setErrorAlert] = useState(false);
   const [resetAlert, setResetAlert] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -36,6 +37,7 @@ function Login() {
         const user = userCredential.user;
 
         setSuccessAlert(true);
+        setLoading(true);
 
         setTimeout(() => {
           setSuccessAlert(false);
@@ -43,18 +45,16 @@ function Login() {
         }, 3000);
         setredirect(true);
 
-        console.log(user);
         // ...
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
-        console.log(errorCode);
+
         setErrorAlert(true);
 
         setTimeout(() => {
           setErrorAlert(false);
-          console.log("time out");
         }, 3000);
       });
   };
@@ -126,8 +126,20 @@ function Login() {
             />
           </div>
           <div className="flex items-center justify-between">
-            <button className=" primary" type="submit">
-              Sign In
+            <button
+              className=" primary"
+              type="submit"
+              disabled={loading === true ? true : false}>
+              {loading === false ? (
+                <div>Sign In</div>
+              ) : (
+                <div>
+                  <img
+                    src="https://i.pinimg.com/originals/3d/6a/a9/3d6aa9082f3c9e285df9970dc7b762ac.gif"
+                    className="w-12 h-12"
+                  />
+                </div>
+              )}
             </button>
             <div
               className="inline-block align-baseline font-bold text-sm text-primary hover:cursor-pointer"

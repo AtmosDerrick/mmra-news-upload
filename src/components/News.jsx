@@ -4,18 +4,17 @@ import { database } from "../firebase";
 //images
 import newsImage from "../images/news.jpg";
 import EditNews from "../pages/EditNews";
-import {
-  getDatabase,
-  update,
-  ref,
-  onValue,
-  remove,
-  child,
-  push,
-} from "firebase/database";
+import { update, ref } from "firebase/database";
 import { UserAuth } from "../context/Auth";
 
-function News({ newsData, setNewsData, pageReady }) {
+function News({
+  newsData,
+  setNewsData,
+  pageReady,
+  setDelete,
+  getDeletedItem,
+  setGetDeletedItem,
+}) {
   const [redirect, setRedirect] = useState("");
   const [title, setTitle] = useState("");
   const [subTitle, setSubTitle] = useState("");
@@ -64,21 +63,9 @@ function News({ newsData, setNewsData, pageReady }) {
   }
 
   const handleDelete = (newone) => {
-    const updates = {};
-    updates[`/news/${newone.uuid}`] = null; // Remove the child node under the parent node
-
-    // Update the Firebase database with the 'updates' object
-    update(ref(database), updates)
-      .then(() => {
-        console.log("Data deleted successfully");
-        setIsDeleting(true);
-      })
-      .catch((error) => {
-        console.error("Error deleting data:", error);
-      })
-      .finally(() => {
-        setIsDeleting(false);
-      });
+    setDelete(true);
+    console.log(setDelete);
+    setGetDeletedItem(newone.uuid);
   };
 
   if (pageReady === false) {

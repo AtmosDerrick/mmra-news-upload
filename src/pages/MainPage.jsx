@@ -2,13 +2,15 @@ import React, { useState, useEffect } from "react";
 import News from "../components/News";
 import { Link } from "react-router-dom";
 import { database } from "../firebase";
-import { getDatabase, ref, onValue } from "firebase/database";
+import { getDatabase, ref, onValue, update } from "firebase/database";
 
 function MainPage() {
   const [search, setSearch] = useState("");
   const [newsData, setNewsData] = useState([]);
   const [prevNews, setPrevNews] = useState([]);
   const [pageReady, setPageReady] = useState(false);
+  const [deleteAlert, setDeleteAlert] = useState(false);
+  const [getDeletedItem, setGetDeletedItem] = useState("");
 
   useEffect(() => {
     onValue(ref(database), (snapshot) => {
@@ -27,6 +29,23 @@ function MainPage() {
       }
     });
   }, []);
+
+  console.log({ getDeletedItem });
+
+  const handleDelete = () => {
+    const updates = {};
+    updates[`/news/${getDeletedItem}`] = null; // Remove the child node under the parent node
+    //Update the Firebase database with the 'updates' object
+    update(ref(database), updates)
+      .then(() => {
+        console.log("Data deleted successfully");
+        setDeleteAlert(false);
+      })
+      .catch((error) => {
+        console.error("Error deleting data:", error);
+      })
+      .finally(() => {});
+  };
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -47,6 +66,39 @@ function MainPage() {
 
   return (
     <div>
+      {deleteAlert === true ? (
+        <div className="w-1/2 mx-auto  ">
+          <div className="w-1/2   h-[60vh] absolute z-30 flex items-center">
+            <div className="w-3/4 px-4 mx-auto h-[] mt-8 p-4 bg-white shadow-md rounded-md">
+              <h4 className="text-lg  mb-4">
+                Are you sure you want delete this News?
+              </h4>
+              <div className="flex justify-between ">
+                <div>
+                  {" "}
+                  <button
+                    className="px-6 py-2 border-2 border-black rounded-md"
+                    onClick={() => {
+                      setDeleteAlert(false);
+                    }}>
+                    Cancel
+                  </button>
+                </div>
+                <div>
+                  {" "}
+                  <button
+                    className="px-6 py-2 bg-red-600 rounded-md"
+                    onClick={handleDelete}>
+                    Yes
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        ""
+      )}
       <div className="bg-gray-100 h-[10vh] w-full mt-4 md:rounded-2xl flex justify-between py-2 px-2">
         <div className="w-2/4 gap-2 flex justify-start ">
           <div className="flex items-center bg-primary text-secondary  rounded-md px-2 md:px-4 py-1 md:py-2">
@@ -124,6 +176,9 @@ function MainPage() {
           newsData={newsData}
           setNewsData={setNewsData}
           pageReady={pageReady}
+          setDelete={setDeleteAlert}
+          getDeletedItem={getDeletedItem}
+          setGetDeletedItem={setGetDeletedItem}
         />
       ) : (
         console.log("undefine")

@@ -6,14 +6,13 @@ import MainPage from "./pages/MainPage";
 import CreateNews from "./pages/CreateNews";
 import EditNews from "./pages/EditNews";
 import { AuthContextProvider } from "./context/Auth";
-import PrivateRoute from "./components/PrivateRoute";
 import CreateTips from "./pages/CreateTips";
+import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
   return (
     <div className="w-full xl:w-3/4 xl:mx-auto px-0 lg:px-8 ">
       <AuthContextProvider>
-        {" "}
         <Nav />
         <Routes>
           <Route index element={<HomePage />} />

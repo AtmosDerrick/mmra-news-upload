@@ -5,7 +5,7 @@ function HomePage() {
   return (
     <div id="homepage" className="w-full  md:flex md:justify-between ">
       <div className="w-full h-[30vh] ">
-        <div className="mt-2 text-center py-2 font-sans font-bold  text-xl uppercase">
+        <div className="lg:hidden mt-2  text-center py-2 font-sans font-bold  text-xl uppercase">
           <span className="bg-primary text-white px-8 py-2">Sign in</span>
         </div>
         <img

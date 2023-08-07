@@ -54,7 +54,7 @@ function CreateTips() {
   };
 
   return (
-    <div className="flex justify-between">
+    <div className="lg:flex lg:justify-between">
       <div className="w-full">
         <img
           src="https://i.pinimg.com/564x/c7/f3/6e/c7f36e60f34cc5a66901c15db60fc034.jpg"
