@@ -25,8 +25,12 @@ function Nav() {
         </Link>
       </div>
       {user?.email && (
-        <div className="flex items-center text-white font-semibold text-xl">
-          <button onClick={handleSignOut}>Logout</button>
+        <div className="flex items-center text-red-500 rounded-md font-semibold text-xl">
+          <button
+            onClick={handleSignOut}
+            className="bg-white px-4 py-2 rounded-lg ">
+            Logout
+          </button>
         </div>
       )}
     </div>

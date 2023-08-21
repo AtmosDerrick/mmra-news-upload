@@ -88,7 +88,7 @@ function News({
             {reverseNews.map((newone) => (
               <div
                 key={newone.uuid}
-                className="h-[auto] rounded-md shadow-md bg-white ">
+                className="h-[auto] rounded-md shadow-md bg-white p-1 ">
                 <div>
                   <img
                     src={newone.imageUrl}
@@ -144,7 +144,7 @@ function News({
                           viewBox="0 0 24 24"
                           strokeWidth={1.5}
                           stroke="currentColor"
-                          className="w-6 h-6 text-primary">
+                          className="w-6 h-6 text-red-600">
                           <path
                             strokeLinecap="round"
                             strokeLinejoin="round"

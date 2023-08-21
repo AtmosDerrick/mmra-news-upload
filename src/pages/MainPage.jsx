@@ -71,9 +71,9 @@ function MainPage() {
           <div className="w-1/2   h-[60vh] absolute z-30 flex items-center">
             <div className="w-3/4 px-4 mx-auto h-[] mt-8 p-4 bg-white shadow-md rounded-md">
               <h4 className="text-lg  mb-4">
-                Are you sure you want delete this News?
+                News will be deleted permenently, will like to continue?
               </h4>
-              <div className="flex justify-between ">
+              <div className="flex justify-between w-3/4mx-auto ">
                 <div>
                   {" "}
                   <button
