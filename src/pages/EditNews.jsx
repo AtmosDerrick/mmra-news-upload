@@ -1,19 +1,61 @@
 import { useState } from "react";
 import React from "react";
+import { getDatabase, ref, child, push, update } from "firebase/database";
+import { database } from "../firebase";
 
-function EditNews({ edittitle, editsubTitle, editbody }) {
+function EditNews({
+  edittitle,
+  editsubTitle,
+  editbody,
+  edituuid,
+  editImageUrl,
+  edituser,
+  edittimestamp,
+}) {
   const [title, setTitle] = useState(edittitle);
   const [subTitle, setSubTitle] = useState(editsubTitle);
+  const [body, setBody] = useState(editbody);
+  const [imageUrl, setImageUrl] = useState(editImageUrl);
+  const [user, setUser] = useState(edituser);
+  const [isEditing, setisEditing] = useState(false);
+  const [errorAlert, setErrorAlert] = useState(false);
 
-  const [excerpt, setExcerpt] = useState(editbody);
+  console.log({ edituuid }, "working");
 
   const [selectedImage, setSelectedImage] = useState(null);
 
-  console.log(title);
+  console.log({ edituuid });
 
-  const handleSubmit = (e) => {
+  const handleUpate = (e) => {
     e.preventDefault();
+    setisEditing(false);
     // Logic to handle form submission
+
+    const updates = {};
+    updates[`/news/${edituuid}`] = {
+      title,
+      subTitle,
+      body,
+      imageUrl,
+      user,
+      uuid: edituuid,
+      timestamp: edittimestamp,
+    }; // edit the child node under the parent node
+
+    // Update the Firebase database with the 'updates' object
+    update(ref(database), updates)
+      .then(() => {
+        console.log("Data edit successfully");
+        setisEditing(true);
+        setTitle("");
+        setSubTitle("");
+
+        setBody("");
+      })
+      .catch((error) => {
+        console.error("Error deleting data:", error);
+        setErrorAlert(true);
+      });
   };
 
   const handleImageUpload = (e) => {
@@ -21,110 +63,91 @@ function EditNews({ edittitle, editsubTitle, editbody }) {
     setSelectedImage(URL.createObjectURL(file));
   };
   return (
-    <div className="flex justify-between">
-      <div className="w-full">
-        <img src="./images/globe.jpg" alt="cyber globe" className="h-[90vh]" />
-      </div>
-      <div className="w-full h-[90vh] overflow-y-auto">
-        <div className="w-full text-2xl font-bold mb-2 text-center font-serif text-primary z-20 pt-4 ">
-          Edit Your News
+    <div>
+      <div className="md:flex md:justify-between">
+        <div className="w-full">
+          <img
+            src="https://i.pinimg.com/564x/69/20/48/692048f3e7db73e974ae84d0520f9b28.jpg"
+            alt="cyber globe"
+            className="md:h-[90vh]"
+          />
         </div>
-        <form
-          className="bg-white shadow-md rounded px-8 pt-2 pb-2 mb-4"
-          onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="title">
-              Title
-            </label>
-            <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="title"
-              type="text"
-              placeholder="Enter the title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          </div>
-
-          <div className="mb-4">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="title">
-              Sub Title
-            </label>
-            <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="title"
-              type="text"
-              placeholder="Enter the subtitle"
-              value={subTitle}
-              onChange={(e) => setSubTitle(e.target.value)}
-            />
-          </div>
-
-          <div className="mb-4">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="excerpt">
-              Body
-            </label>
-            <textarea
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="excerpt"
-              placeholder="Enter the excerpt"
-              rows="10"
-              value={excerpt}
-              onChange={(e) => setExcerpt(e.target.value)}></textarea>
-          </div>
-          <div className="mb-4">
-            <div className="">
-              <div className="flex items-center justify-center">
-                {selectedImage ? (
-                  <img
-                    src={selectedImage}
-                    alt="Uploaded"
-                    className="max-w-full h-auto"
-                  />
-                ) : (
-                  <div className="border-2 border-gray-300 border-dashed rounded-lg p-6">
-                    <label
-                      htmlFor="imageUpload"
-                      className="flex items-center justify-center flex-col cursor-pointer">
-                      <svg
-                        className="w-12 h-12 text-gray-500 mb-2"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                        />
-                      </svg>
-                      <span className="text-gray-500">Upload an image</span>
-                    </label>
-                    <input
-                      type="file"
-                      id="imageUpload"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={handleImageUpload}
-                    />
-                  </div>
-                )}
+        <div className="w-full h-[90vh] overflow-y-auto">
+          <div>
+            {" "}
+            {isEditing && (
+              <div className="bg-blue-400  mt-2 py-2 px-4 w-full rounded-md shadow-md text-center font-medium">
+                Edit successfully
               </div>
+            )}
+            {errorAlert && (
+              <div className="bg-red-400  mt-2 py-2 px-4 w-full rounded-md shadow-md text-center font-medium">
+                Something went wrong
+              </div>
+            )}
+          </div>
+          <div className="w-full text-2xl font-bold mb-2 text-center font-serif text-primary z-20 pt-4 ">
+            Edit Your News
+          </div>
+          <form
+            className="bg-white shadow-md rounded px-8 pt-2 pb-2 mb-4"
+            onSubmit={handleUpate}>
+            <div className="mb-4">
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2"
+                htmlFor="title">
+                Title
+              </label>
+              <input
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="title"
+                type="text"
+                placeholder="Enter the title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
             </div>
-          </div>
-          <div className="w-full">
-            <button className="primary w-full" type="submit">
-              Publish
-            </button>
-          </div>
-        </form>
+
+            <div className="mb-4">
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2"
+                htmlFor="title">
+                Sub Title
+              </label>
+              <input
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="title"
+                type="text"
+                placeholder="Enter the subtitle"
+                value={subTitle}
+                onChange={(e) => setSubTitle(e.target.value)}
+              />
+            </div>
+
+            <div className="mb-4">
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2"
+                htmlFor="excerpt">
+                Body
+              </label>
+              <textarea
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="excerpt"
+                placeholder="Enter the excerpt"
+                rows="10"
+                value={body}
+                onChange={(e) => setBody(e.target.value)}></textarea>
+            </div>
+            <div className="mb-4">
+              <div className=""></div>
+            </div>
+            <div className="w-full">
+              <button className="primary w-full" type="submit">
+                Edit
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

@@ -1,13 +1,20 @@
 import React, { useState } from "react";
 import { Navigate } from "react-router-dom";
-import {  signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase";
+import {
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+} from "firebase/auth";
 
+import { auth } from "../firebase";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [redirect, setredirect] = useState(false);
+  const [successAlert, setSuccessAlert] = useState(false);
+  const [errorAlert, setErrorAlert] = useState(false);
+  const [resetAlert, setResetAlert] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -25,20 +32,45 @@ function Login() {
     }
 
     signInWithEmailAndPassword(auth, email, password)
-  .then((userCredential) => {
-    // Signed in 
-    const user = userCredential.user;
-    setredirect(true);
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
 
-    console.log(user)
-    // ...
-  })
-  .catch((error) => {
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    console.log(errorCode)
-  });
+        setSuccessAlert(true);
+        setLoading(true);
 
+        setTimeout(() => {
+          setSuccessAlert(false);
+          console.log("time out");
+        }, 3000);
+        setredirect(true);
+
+        // ...
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+
+        setErrorAlert(true);
+
+        setTimeout(() => {
+          setErrorAlert(false);
+        }, 3000);
+      });
+  };
+
+  const handleForgetPassword = () => {
+    setResetAlert(true);
+    sendPasswordResetEmail(auth, email)
+      .then(() => {
+        // Password reset email sent!
+        console.log("send password reset");
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // ..
+      });
   };
 
   if (redirect) {
@@ -48,6 +80,21 @@ function Login() {
     <div className="w-full ">
       <div className="w-full px-4 flex justify-center items-center h-[40vh] ">
         <form className="w-full   px-8 pt-6 pb-8 mb-4" onSubmit={handleSubmit}>
+          {successAlert && (
+            <div className="bg-blue-400  my-2 py-2 px-4 w-full rounded-md shadow-md text-center font-medium">
+              Publish Successfully
+            </div>
+          )}
+          {resetAlert && (
+            <div className="bg-blue-400  my-2 py-2 px-4 w-full rounded-md shadow-md text-center font-medium">
+              Check your email to reset password
+            </div>
+          )}
+          {errorAlert && (
+            <div className="bg-red-400  my-2 py-2 px-4 w-full rounded-md shadow-md text-center font-medium">
+              Incorrect credentials
+            </div>
+          )}
           <div className="mb-4">
             <label
               className="block text-gray-700 text-sm font-bold mb-2"
@@ -79,14 +126,26 @@ function Login() {
             />
           </div>
           <div className="flex items-center justify-between">
-            <button className=" primary" type="submit">
-              Sign In
+            <button
+              className=" primary"
+              type="submit"
+              disabled={loading === true ? true : false}>
+              {loading === false ? (
+                <div>Sign In</div>
+              ) : (
+                <div>
+                  <img
+                    src="https://i.pinimg.com/originals/3d/6a/a9/3d6aa9082f3c9e285df9970dc7b762ac.gif"
+                    className="w-12 h-12"
+                  />
+                </div>
+              )}
             </button>
-            <a
-              className="inline-block align-baseline font-bold text-sm text-primary"
-              href="#">
+            <div
+              className="inline-block align-baseline font-bold text-sm text-primary hover:cursor-pointer"
+              onClick={handleForgetPassword}>
               Forgot Password?
-            </a>
+            </div>
           </div>
         </form>
       </div>
