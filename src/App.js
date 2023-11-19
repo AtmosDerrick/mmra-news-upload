@@ -17,14 +17,13 @@ function App() {
         <Routes>
           <Route index element={<HomePage />} />
           <Route exact path="/" element={<PrivateRoute />}>
-            {" "}
-            <Route path="/mainpage" element={<MainPage />} />{" "}
+            <Route path="/mainpage" element={<MainPage />} />
             <Route path="/createNews" element={<CreateNews />} />
             <Route path="/createtips" element={<CreateTips />} />{" "}
             <Route path="/edit" element={<EditNews />} />
             <Route path="/" element={<HomePage />} />{" "}
           </Route>
-        </Routes>{" "}
+        </Routes>
       </AuthContextProvider>
     </div>
   );
